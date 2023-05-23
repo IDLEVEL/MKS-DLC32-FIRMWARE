@@ -30,6 +30,8 @@
 
 #define ENABLE_OTA
 
+#undef ENABLE_TELNET
+#undef ENABLE_BLUETOOTH
 // #define USE_BEEP
 
 // #define USE_BL_TOUCH
