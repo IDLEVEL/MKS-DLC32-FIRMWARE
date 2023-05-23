@@ -238,8 +238,12 @@ function HideAll(msg){
     }
     document.title = document.title + "(disconnected)";
     document.getElementById('MSG').innerHTML = msg;
+	
+	/*
+	Dont hide all for pc debug
     document.getElementById('FILESYSTEM').style.display = "none";
     document.getElementById('FWUPDATE').style.display = "none";
+	*/
 }
 
 function FWError(){
