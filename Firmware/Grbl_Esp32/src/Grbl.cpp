@@ -45,7 +45,10 @@ void grbl_init() {
     WiFi.enableAP(false);
     WiFi.mode(WIFI_OFF);
     client_init();  // Setup serial baud rate and interrupts
-    display_init();
+
+    #ifdef DISPLAY_ENABLE
+        display_init();
+    #endif
 
 // show the map name at startup
 #ifdef MACHINE_NAME
@@ -118,11 +121,18 @@ void reset_mc_config(void) {
 void _mc_task_init(void) {
 
     mks_grbl_parg_init();
-    ts35_beep_init();
-    bsp_led_init();
-    tft_TS35_init();
+
+    #ifdef DISPLAY_ENABLE
+        ts35_beep_init();
+        bsp_led_init();
+        tft_TS35_init();
+    #endif
+
     test_cfg_find_init();
-    disp_task_init();
+
+    #ifdef DISPLAY_ENABLE
+        disp_task_init();
+    #endif
 }
 
 

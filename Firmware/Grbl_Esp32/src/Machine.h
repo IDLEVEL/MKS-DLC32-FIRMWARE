@@ -6,7 +6,7 @@
 #ifndef MACHINE_FILENAME
 
 #ifdef MACHINE_TYPE_DEFAULT
-    #include "Machines/i2s_out_xyz_mks_dlc32.h"
+    #include "Machines/i2s_out_xyz_mks_dlc32_custom.h"
 #else
     #include "Machines/i2s_out_corexy_mks_dlc32.h"
 #endif
