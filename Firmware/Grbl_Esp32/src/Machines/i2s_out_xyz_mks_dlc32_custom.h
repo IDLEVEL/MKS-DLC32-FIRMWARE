@@ -194,3 +194,8 @@
 #define DEFAULT_BEEP_STATUS                 1
 #define DEFAULT_LANGUAGE_STATUS             1       // default simple engliash
 
+#define USER_DIGITAL_PIN_0 GPIO_NUM_33
+#define USER_DIGITAL_PIN_1 GPIO_NUM_25
+#define USER_DIGITAL_PIN_2 GPIO_NUM_26
+#define USER_DIGITAL_PIN_3 GPIO_NUM_27
+

@@ -32,10 +32,12 @@ void grbl_init() {
     disableCore0WDT();
     disableCore1WDT();
 
+#ifdef DISPLAY_ENABLE
     pinMode(LCD_EN, OUTPUT);
     
     LCD_BLK_OFF;
-    
+#endif
+
 #ifdef USE_I2S_OUT
     i2s_out_init();  // The I2S out must be initialized before it can access the expanded GPIO port
 #endif

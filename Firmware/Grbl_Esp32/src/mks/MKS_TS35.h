@@ -42,8 +42,10 @@
 #define LCD_BLK_OFF         digitalWrite(LCD_EN, HIGH)
 #endif
 
-// LCD Driver
-extern TFT_eSPI tft;
+#ifdef DISPLAY_ENABLE
+    // LCD Driver
+    extern TFT_eSPI tft;
+#endif
 
 void tft_TS35_init();
 void tft_TS35_SPI_begin(void);

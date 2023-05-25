@@ -47,17 +47,18 @@ void my_disp_flush(lv_disp_drv_t * disp, const lv_area_t * area, lv_color_t * co
     uint32_t w = (area->x2 - area->x1 + 1);
     uint32_t h = (area->y2 - area->y1 + 1);
 
+#ifdef DISPLAY_ENABLE
     tft.startWrite();
     tft.setAddrWindow(area->x1, area->y1, w, h);
-    
-#if defined(USE_LCD_DMA)
-    tft.pushColorsDMA(&color_p->full, w * h, true);
-#else 
-    tft.pushColors(&color_p->full, w * h, true);
-#endif
-    
-
+   
+    #if defined(USE_LCD_DMA)
+        tft.pushColorsDMA(&color_p->full, w * h, true);
+    #else 
+        tft.pushColors(&color_p->full, w * h, true);
+    #endif
     tft.endWrite();
+#endif
+
     lv_disp_flush_ready(disp);
 }
 
@@ -66,7 +67,12 @@ bool my_indev_touch(struct _lv_indev_drv_t * indev_drv, lv_indev_data_t * data) 
     uint16_t touchX=0, touchY=0;
     static uint16_t last_x = 0;
     static uint16_t last_y = 0;
+
+#ifdef DISPLAY_ENABLE  
     boolean touched = tft.getTouch(&touchY, &touchX);
+#else
+    boolean touched = false;
+#endif
 
     if(touchX > 480) {
         touchX = 480;

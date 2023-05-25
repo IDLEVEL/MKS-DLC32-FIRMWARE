@@ -1,16 +1,25 @@
 #include "MKS_TS35.h"
 
-TFT_eSPI tft = TFT_eSPI(); 
+#ifdef DISPLAY_ENABLE
+    TFT_eSPI tft = TFT_eSPI(); 
+#endif
 
 void tft_LCD_Fill() {
-    tft.fillRect(0, 0,480, 320, TFT_COLOR_RED);
+
+    #ifdef DISPLAY_ENABLE
+        tft.fillRect(0, 0,480, 320, TFT_COLOR_RED);
+    #endif
 }
 
 void tft_TS35_init() {
-    tft.begin();
-    tft.setRotation(1);
-    // tft.fillScreen(tft.color565(0X1A, 0X1A, 0X1A));
-    tft.initDMA();
+
+    #ifdef DISPLAY_ENABLE
+        tft.begin();
+        tft.setRotation(1);
+        // tft.fillScreen(tft.color565(0X1A, 0X1A, 0X1A));
+        tft.initDMA();
+    #endif
+
     delay_ms(100);
 }   
 
