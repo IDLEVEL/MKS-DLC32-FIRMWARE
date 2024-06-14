@@ -116,7 +116,7 @@
 #define IIC_SCL                     GPIO_NUM_4
 #define IIC_SDA                     GPIO_NUM_0
 
-#define COOLANT_FLOOD_PIN           IIC_SCL
+//#define COOLANT_FLOOD_PIN           IIC_SCL
 
 //sd card spi
 #define GRBL_SPI_SCK 			    GPIO_NUM_14

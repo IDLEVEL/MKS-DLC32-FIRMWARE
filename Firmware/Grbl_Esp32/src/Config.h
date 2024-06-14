@@ -117,6 +117,7 @@ const int MAX_N_AXIS = 6;
 #define ENABLE_SERIAL2SOCKET_IN
 #define ENABLE_SERIAL2SOCKET_OUT
 
+#define USE_UART_I2C_PINS
 // Captive portal is used when WiFi is in access point mode.  It lets the
 // WebUI come up automatically in the browser, instead of requiring the user
 // to browse manually to a default URL.  It works like airport and hotel

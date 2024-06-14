@@ -108,7 +108,12 @@ void client_init() {
     client_reset_read_buffer(CLIENT_ALL);
     Serial.write("\r\n");  // create some white space after ESP32 boot info
 #else
-    Uart0.setPins(1, 3);  // Tx 1, Rx 3 - standard hardware pins
+    #if defined(USE_UART_I2C_PINS)
+        Uart0.setPins(IIC_SDA, IIC_SCL); 
+    #else
+        Uart0.setPins(1, 3);  // Tx 1, Rx 3 - standard hardware pins
+    #endif
+    
     Uart0.begin(BAUD_RATE, Uart::Data::Bits8, Uart::Stop::Bits1, Uart::Parity::None);
 
     client_reset_read_buffer(CLIENT_ALL);
