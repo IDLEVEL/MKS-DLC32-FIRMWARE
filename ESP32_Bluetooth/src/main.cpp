@@ -4,89 +4,124 @@
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <ArduinoOTA.h>
+#include "helpers.h"
+#include "ESPTelnet.h"
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
 
-void copy_stream(Stream& src, Stream& dst1, Stream& dst2)
-{
-  uint8_t buffer[512];
-
-  auto avail = src.available();
-  src.readBytes(buffer, avail);
-
-  dst1.write(buffer, avail);
-  dst2.write(buffer, avail);
-}
-
 #define MKS_Serial Serial2
 BluetoothSerial SerialBT;
+ESPTelnet telnet;
 
-char bt_buf[256];
-size_t bt_buf_pos = 0;
+CmdBuffer<512> bt_buffer;
+CmdBuffer<512> mks_buffer;
 
-template<size_t SIZE>
-struct CmdBuffer
+bool save_mode = false;
+
+bool bt_exec_line(const char* str, uint16_t len)
 {
-  uint8_t buffer[SIZE];
-  size_t position = 0;
+  int32_t pin;
 
-  size_t push(uint8_t byte)
+  if(sscanf(str, "M42 P%d S1", &pin))
   {
-    buffer[position++] = byte;
-
-    switch (byte)
-    {
-      case '\n':
-      case '\t';
-      case 23:
-
-        auto size = position;
-        position = 0;
-        return size;
-    }
-
-    return 0;
+    SerialBT.write((uint8_t*)"ok\r\n", 4);
+    return false;
   }
+
+  return true;
+
+  if(str[0] == '?')
+    return true;
+
+  if(save_mode)
+  {
+    MKS_Serial.write("ok\r\n");
+    return false;
+  }
+
+  if(str[0] == '@')
+  {
+    if(!save_mode)
+    {
+      save_mode = true;
+      return false;
+    }
+    else
+    {
+      save_mode = false;
+      return true;
+    }
+  }
+
+  return true;
 }
 
-void exec_line()
+bool mks_exec_line()
 {
+  return true;
+  size_t pos = 0;
 
+  char* char_ptr = (char*)bt_buffer.buffer;
+
+  uint8_t offset = 0;
+  float_t float_value;
+
+  switch(char_ptr[pos++])
+  {
+      case 3:
+        if(char_ptr[pos])
+      if(!read_float(char_ptr, &offset, &float_value))
+        return false;
+
+      break;
+    
+  }
 }
 
 void onBtData(const uint8_t *buffer, size_t size)
 {
-  MKS_Serial.write(buffer, size);
-  Serial.write(buffer, size);
+  uint16_t used_size = 0;
 
   for(auto i = 0; i < size; i++)
   {
-    bt_buf[bt_buf_pos++] = buffer[i];
-
-    if(bt_buf_pos == sizeof(bt_buf))
+    if((used_size = bt_buffer.push(buffer[i])) != CMD_BUFFER_WAIT)
     {
-      exec_line();
-      bt_buf_pos = 0;
-    }
-
-    if(buffer[i] == '\n')
-    {
-      exec_line();
-      bt_buf_pos = 0;
+      telnet.print("P_BT:");
+      telnet.write(bt_buffer.buffer, used_size);
+      MKS_Serial.write(bt_buffer.buffer, used_size);
     }
   }
+
+  //MKS_Serial.write(buffer, size);
 }
 
 void onMksData()
 {
-  copy_stream(MKS_Serial, Serial, SerialBT);
+  uint16_t used_size = 0;
+
+  while(MKS_Serial.available())
+  {
+    auto byte = MKS_Serial.read();
+
+    if(byte < 0)
+      break;
+
+    if((used_size = mks_buffer.push(byte)) != CMD_BUFFER_WAIT)
+    {
+      telnet.print("P_MKS:");
+      telnet.write(mks_buffer.buffer, used_size);
+      SerialBT.write(mks_buffer.buffer, used_size);
+    }
+
+    
+  }
 }
 
 void onSerialData()
 {
-  copy_stream(Serial, MKS_Serial, SerialBT);
+  //copy_stream(Serial, MKS_Serial, SerialBT);
 }
 
 const char *ssid = "kv-41";
@@ -151,77 +186,21 @@ void setup()
 
   ArduinoOTA.begin();
 
+  telnet.begin();   
+
   Serial.println("Ready");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 }
 
-/*
-int buffer_pos = 0;
-
-char buffer[128];
-
-void parse_buffer()
-{
-  int char_counter = 0;
-
-  while (line[char_counter] != 0)
-  {
-    switch (line[char_counter])
-    {
-    case 'M';
-      strtol();
-    
-    default:
-      break;
-    }
-  }
-}
-
-void parse(char byte)
-{
-  return;
-  if(byte == 0)
-  {
-    buffer_pos = 0;
-    parse_buffer();
-  }
-  else
-  {
-    if(buffer_pos < 128)
-      buffer[buffer_pos++] = byte;
-  }
-}
-*/
-
-void parse(char byte)
-{
-  
-}
 
 void loop() 
 {
-  /*uint8_t buffer[256];
+  telnet.loop();
 
-  int byte;
-  
-  if((byte = Serial2.read()) != -1)
-  {
-    SerialBT.write(byte);
-    Serial.write(byte);
-  }
-
-  if((byte = Serial.read()) != -1)
-  {
-    Serial2.write(byte);
-    //parse(byte);
-  }
-
-  if((byte = SerialBT.read()) != -1)
-  {
-    Serial2.write(byte);
-    //parse(byte);
-  }*/
+  delay(3);
 
   ArduinoOTA.handle();
+
+  delay(3);
 }
