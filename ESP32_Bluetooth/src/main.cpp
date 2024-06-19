@@ -1,11 +1,11 @@
-#include "BluetoothSerial.h"
+
 #include <stdio.h>
 #include <stddef.h>
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <ArduinoOTA.h>
 #include "helpers.h"
-#include "ESPTelnet.h"
+#include "GCode.h"
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
@@ -13,72 +13,12 @@
 
 #define MKS_Serial Serial2
 BluetoothSerial SerialBT;
-ESPTelnet telnet;
+ESPTelnet Telnet;
 
 CmdBuffer<512> bt_buffer;
 CmdBuffer<512> mks_buffer;
 
-bool save_mode = false;
-
-bool bt_exec_line(const char* str, uint16_t len)
-{
-  int32_t pin;
-
-  if(sscanf(str, "M42 P%d S1", &pin))
-  {
-    SerialBT.write((uint8_t*)"ok\r\n", 4);
-    return false;
-  }
-
-  return true;
-
-  if(str[0] == '?')
-    return true;
-
-  if(save_mode)
-  {
-    MKS_Serial.write("ok\r\n");
-    return false;
-  }
-
-  if(str[0] == '@')
-  {
-    if(!save_mode)
-    {
-      save_mode = true;
-      return false;
-    }
-    else
-    {
-      save_mode = false;
-      return true;
-    }
-  }
-
-  return true;
-}
-
-bool mks_exec_line()
-{
-  return true;
-  size_t pos = 0;
-
-  char* char_ptr = (char*)bt_buffer.buffer;
-
-  uint8_t offset = 0;
-  float_t float_value;
-
-  switch(char_ptr[pos++])
-  {
-      case 3:
-        if(char_ptr[pos])
-      if(!read_float(char_ptr, &offset, &float_value))
-        return false;
-
-      break;
-    
-  }
-}
+GCodeExcec gcode_excec;
 
 void onBtData(const uint8_t *buffer, size_t size)
 {
@@ -88,9 +28,7 @@ void onBtData(const uint8_t *buffer, size_t size)
   {
     if((used_size = bt_buffer.push(buffer[i])) != CMD_BUFFER_WAIT)
     {
-      telnet.print("P_BT:");
-      telnet.write(bt_buffer.buffer, used_size);
-      MKS_Serial.write(bt_buffer.buffer, used_size);
+      gcode_excec.process(bt_buffer.buffer, used_size);
     }
   }
 
@@ -110,12 +48,8 @@ void onMksData()
 
     if((used_size = mks_buffer.push(byte)) != CMD_BUFFER_WAIT)
     {
-      telnet.print("P_MKS:");
-      telnet.write(mks_buffer.buffer, used_size);
-      SerialBT.write(mks_buffer.buffer, used_size);
-    }
-
-    
+      gcode_excec.process(mks_buffer.buffer, used_size);
+    }    
   }
 }
 
