@@ -12,25 +12,21 @@ class GCodeParser
 
     CLIENT _client;
 
-    bool parse_command();
-
-    bool _parse_internal()
-    {
-        switch (_str[_position++])
-        {
-        case '#':
-            return parse_command();
-        
-        default:
-            return true;
-        }
-    }
+    bool parse_command_m();
+    bool parse_command_internal();
+    
+    bool _parse_internal();
 
 public:
 
     GCodeParser(CLIENT client, const char* str, uint16_t length) : _client(client), _str(str), _length(length), _position(0)
     {
 
+    }
+
+    u32_t read_int()
+    {
+        
     }
 
     bool parse()

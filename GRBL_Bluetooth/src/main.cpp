@@ -27,7 +27,7 @@ void onBtData(const uint8_t *buffer, size_t size)
   {
     if((used_size = bt_buffer.push(buffer[i])) != CMD_BUFFER_WAIT)
     {
-      gcode_excec.process(CLIENT_BT, (char*)bt_buffer.buffer, used_size);
+      gcode_excec.process(CLIENT_BT, bt_buffer.buffer, used_size);
     }
   }
 
@@ -47,7 +47,7 @@ void onMksData()
 
     if((used_size = mks_buffer.push(byte)) != CMD_BUFFER_WAIT)
     {
-      gcode_excec.process(CLIENT_BOARD, (char*)mks_buffer.buffer, used_size);
+      gcode_excec.process(CLIENT_BOARD, mks_buffer.buffer, used_size);
     }    
   }
 }
@@ -119,7 +119,7 @@ void setup()
 
   ArduinoOTA.begin();
 
-  telnet.begin();   
+  Telnet.begin();   
 
   Serial.println("Ready");
   Serial.print("IP address: ");
@@ -129,7 +129,7 @@ void setup()
 
 void loop() 
 {
-  telnet.loop();
+  Telnet.loop();
 
   delay(3);
 

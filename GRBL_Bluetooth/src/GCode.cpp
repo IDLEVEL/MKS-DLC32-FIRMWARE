@@ -5,7 +5,47 @@
     snprintf(buffer, sizeof(buffer), #__VA_ARGS__); \
     this->write(client, buffer);
 
-bool GCodeParser::parse_command()
+bool GCodeParser::_parse_internal()
+{
+    switch (_str[_position++])
+    {
+    case '#':
+        return parse_command_internal();
+
+    case 'M':
+        return parse_command_m();
+    
+    default:
+        return true;
+    }
+}
+
+bool GCodeParser::parse_command_m()
+{
+    int i = atoi(_str + _position);
+
+    switch(i)
+    {
+        case 42:
+
+            switch(_str[_position])
+            {
+                case 'I':
+                    //ignore
+
+                case 'P':
+                    int8_t pin = 0;
+
+                case 'S':
+                    int8_t pwm = 0;
+
+                case 'T':
+                    //pulldown
+            }
+    }
+}
+
+bool GCodeParser::parse_command_internal()
 {
     if(strcmp(_str + _position, "IP") == 0)
     {
@@ -54,12 +94,10 @@ bool GCodeExcec::execute(GCodeCommand cmd)
             return true;
         
         case GCodeCommand::GET_IP:
-            auto ip_string = WiFi.localIP();
-            responce(CLIENT_ALL_OUTPUT, "IP = %s" ip_string.toString());
+            responce(CLIENT_ALL_OUTPUT, "IP = %s" WiFi.localIP().toString());
             return true;
             
         case GCodeCommand::SET_WIFI_SSID:
-            auto ip_string = WiFi.localIP();
             responce(CLIENT_ALL_OUTPUT, "new WIFI ssid = %s" cmd.WIFI_SSID);
             return true;
 
