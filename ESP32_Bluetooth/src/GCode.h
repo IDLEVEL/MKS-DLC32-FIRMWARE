@@ -4,7 +4,7 @@
 #include <string.h>
 #include "esp32_bluetooth.h"
 
-enum CLIENT
+enum CLIENT : uint8_t
 {
     CLIENT_BT = 0x1,
     CLIENT_BOARD = 0x2,
@@ -45,16 +45,14 @@ struct GCodeCommand
 
 class GCodeParser
 {
-    using size_type = uint16_t;
-
     const char* _str;
-    size_type _length;
-    size_type _position;
+    uint16_t _length;
+    uint16_t _position;
     GCodeCommand _command;
 
     CLIENT _client;
 
-    bool parse_q()
+    bool parse_command()
     {
         if(strcmp(_str + _position, "IP") == 0)
         {
@@ -94,7 +92,7 @@ class GCodeParser
 
 public:
 
-    GCodeParser(const char* str, size_type length) : _str(str), _length(length), _position(0)
+    GCodeParser(CLIENT client, const char* str, uint16_t length) : _client(client), _str(str), _length(length), _position(0)
     {
 
     }
@@ -103,8 +101,8 @@ public:
     {
         switch (_str[_position++])
         {
-        case '?':
-            return parse_q();
+        case '#':
+            return parse_command();
         
         default:
             return true;
@@ -121,12 +119,14 @@ public:
         return success;
     }
 
+    const GCodeCommand& get_command()
+    {
+        return _command;
+    }
 };
 
 class GCodeExcec
 {
-    GCodeParser _parser;
-    
 public:
 
     void write(CLIENT client, const char* buffer)
@@ -136,22 +136,23 @@ public:
 
     bool execute(GCodeCommand cmd);
 
-    void process(CLIENT cleint, const char* ptr, GCodeParser::size_type size)
+    void process(CLIENT client, const uint8_t* ptr, uint16_t size)
     {
-        if(!_parser.parse())
+        if(client == CLIENT::CLIENT_BOARD)
         {
-            switch (client)
-            {
-            case CLIENT::CLIENT_BOARD:
-                SerialBT.write(ptr, size);
-                break;
+            SerialBT.write(ptr, size);
+        }
+        else
+        {
+            auto gcode_parser = GCodeParser(client, (char*)ptr, size);
 
-            case CLIENT::CLIENT_BT:
+            if(gcode_parser.parse())
+            {
+                execute(gcode_parser.get_command());
+            }
+            else
+            {
                 MKS_Serial.write(ptr, size);
-                break;
-            
-            default:
-                break;
             }
         }
     }

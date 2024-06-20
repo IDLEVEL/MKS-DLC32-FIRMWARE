@@ -11,7 +11,6 @@
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
 
-#define MKS_Serial Serial2
 BluetoothSerial SerialBT;
 ESPTelnet Telnet;
 
@@ -28,7 +27,7 @@ void onBtData(const uint8_t *buffer, size_t size)
   {
     if((used_size = bt_buffer.push(buffer[i])) != CMD_BUFFER_WAIT)
     {
-      gcode_excec.process(bt_buffer.buffer, used_size);
+      gcode_excec.process(CLIENT_BT, (char*)bt_buffer.buffer, used_size);
     }
   }
 
@@ -48,7 +47,7 @@ void onMksData()
 
     if((used_size = mks_buffer.push(byte)) != CMD_BUFFER_WAIT)
     {
-      gcode_excec.process(mks_buffer.buffer, used_size);
+      gcode_excec.process(CLIENT_BOARD, (char*)mks_buffer.buffer, used_size);
     }    
   }
 }
