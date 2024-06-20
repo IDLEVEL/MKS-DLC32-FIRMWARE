@@ -5,6 +5,44 @@
     snprintf(buffer, sizeof(buffer), #__VA_ARGS__); \
     this->write(client, buffer);
 
+bool GCodeParser::parse_command()
+{
+    if(strcmp(_str + _position, "IP") == 0)
+    {
+        _command = {GCodeCommand::GET_IP};
+        return false;
+    }
+
+    if(strcmp(_str + _position, "RESTART") == 0)
+    {
+        _command = {GCodeCommand::RESTART};
+        return false;
+    }
+
+    if(sscanf("PIN %d %d", _str + _position, &_command.pin_id, &_command.pin_pwm))
+    {
+        _command.cmd = GCodeCommand::SET_PIN;
+        return false;
+    }
+
+    if(strcmp(_str + _position, "WIFI ") == 0)
+    {
+        if(sscanf("SSID %s", _str + _position + 5, _command.WIFI_SSID))
+        {
+            _command.cmd = GCodeCommand::SET_WIFI_SSID;
+            return false;
+        }
+
+        if(sscanf("PASS %s", _str + _position + 5, _command.WIFI_PASS))
+        {
+            _command.cmd = GCodeCommand::SET_WIFI_PASS;
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool GCodeExcec::execute(GCodeCommand cmd)
 {
     char buffer[256];
