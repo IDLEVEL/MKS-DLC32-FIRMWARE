@@ -20,24 +20,40 @@ bool GCodeParser::_parse_internal()
     }
 }
 
+#define PARSE_ERROR 100500
+
+int parse_int()
+{
+
+}
+
+int next_token()
+{
+
+}
+
 bool GCodeParser::parse_command_m()
 {
-    int i = atoi(_str + _position);
-
-    switch(i)
+    switch(parse_int())
     {
+        case PARSE_ERROR:
+            return true;
+
         case 42:
 
-            switch(_str[_position])
+            if(next_token() == PARSE_ERROR)
+                return true;
+
+            switch(parse_char())
             {
                 case 'I':
                     //ignore
 
                 case 'P':
-                    int8_t pin = 0;
+                    int8_t pin = parse_int();
 
                 case 'S':
-                    int8_t pwm = 0;
+                    int8_t pwm = parse_int();
 
                 case 'T':
                     //pulldown
