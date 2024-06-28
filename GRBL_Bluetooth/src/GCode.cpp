@@ -34,30 +34,102 @@ int next_token()
 
 bool GCodeParser::parse_command_m()
 {
-    switch(parse_int())
+    switch(read_int())
     {
         case PARSE_ERROR:
-            return true;
+            return false;
 
         case 42:
 
-            if(next_token() == PARSE_ERROR)
-                return true;
+            if(!next())
+                return false;
+			
+			if(read_char() == 'I')
+			{
+				if(!next())
+					return false;
+			}
+			
+			if(read_char() == 'P')
+			{
+				if(!read_int(pin))
+					return false;
+				
+				if(!next())
+					return true;
+			}
+			
+			if(read_char() == 'S')
+			{
+				if(!read_int(pwm))
+					return false;
+			}
+			
+			return true;
+			
+		case 42:
 
-            switch(parse_char())
-            {
-                case 'I':
-                    //ignore
-
-                case 'P':
-                    int8_t pin = parse_int();
-
-                case 'S':
-                    int8_t pwm = parse_int();
-
-                case 'T':
-                    //pulldown
-            }
+            if(!next())
+                return false;
+			
+			if(read_char() == 'I')
+			{
+				if(!next())
+					return false;
+			}
+			
+			if(read_char() == 'P')
+			{
+				if(!read_int(pin))
+					return false;
+				
+				if(!next())
+					return true;
+			}
+			
+			if(read_char() == 'S')
+			{
+				if(!read_int(pwm))
+					return false;
+			}
+			
+			return true;
+			
+			//G1 X30 Y15 Z2 F100
+			
+			while(next())
+			{
+				switch(read_char())
+				{
+					'X':
+					
+						if(!read_decimal(pwm))
+							return false;
+						
+						break;
+						
+					'Y':
+					
+						if(!read_decimal(pwm))
+							return false;
+						
+						break;
+						
+					'Z':
+					
+						if(!read_decimal(pwm))
+							return false;
+						
+						break;
+						
+					'F':
+					
+						if(!read_decimal(pwm))
+							return false;
+						
+						break;
+				}
+			}
     }
 }
 
