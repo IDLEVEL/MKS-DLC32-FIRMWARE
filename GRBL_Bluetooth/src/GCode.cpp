@@ -142,7 +142,7 @@ bool GCodeExcec::execute(GCodeCommand cmd)
                 }
 
             case TOOL_CHANGE_WAIT_PROBE:
-                
+                 
                 if(cmd.cmd == GCodeCommand::SUCCESS)
                 {
                     tool_change_state = TOOL_CHANGE_WAIT_PROBE;
