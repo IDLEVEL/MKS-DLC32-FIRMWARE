@@ -10,12 +10,16 @@ class GCodeParser
     uint16_t _position;
     GCodeCommand _command;
 
+    const char* _current_str_ptr;
+
     CLIENT _client;
 
     bool parse_command_m();
     bool parse_command_internal();
     
     bool _parse_internal();
+
+    const char PARSE_ERROR = 0;
 
 public:
 
@@ -24,9 +28,17 @@ public:
 
     }
 
-    u32_t read_int()
+    bool next_token()
     {
-        
+        return true;
+    }
+
+    char parse_char()
+    {
+        if(*_current_str_ptr == 0)
+            return PARSE_ERROR;
+
+        return *_current_str_ptr;
     }
 
     bool parse()

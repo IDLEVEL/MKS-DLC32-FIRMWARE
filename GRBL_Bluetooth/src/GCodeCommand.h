@@ -16,11 +16,15 @@ struct GCodeCommand
 {
     enum
     {
+        NONE,
+        SUCCESS,
         GET_IP,
         SET_WIFI_SSID,
         SET_WIFI_PASS,
         SET_PIN,
-        RESTART
+        RESTART,
+        TOOL_CHANGE,
+        OTHER
 
     } cmd;
 

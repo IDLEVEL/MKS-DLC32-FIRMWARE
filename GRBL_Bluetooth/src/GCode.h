@@ -6,6 +6,14 @@
 
 class GCodeExcec
 {
+    typedef enum
+    {
+        TOOL_CHANGE_NONE,
+        TOOL_CHANGE_WAIT_TOOL,
+        TOOL_CHANGE_WAIT_PROBE
+
+    } tool_change_state;
+
 public:
 
     void write(CLIENT client, const char* buffer)
@@ -15,10 +23,22 @@ public:
 
     bool execute(GCodeCommand cmd);
 
+    void send_command(CLIENT client, const char* cmd)
+    {
+
+    }
+
     void process(CLIENT client, const uint8_t* ptr, uint16_t size)
     {
         if(client == CLIENT::CLIENT_BOARD)
         {
+             auto gcode_parser = GCodeParser(client, (char*)ptr, size);
+
+            if(gcode_parser.parse())
+            {
+                execute(gcode_parser.get_command());
+            }
+
             SerialBT.write(ptr, size);
         }
         else

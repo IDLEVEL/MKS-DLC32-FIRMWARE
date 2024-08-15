@@ -7,6 +7,8 @@
 
 bool GCodeParser::_parse_internal()
 {
+    _current_str_ptr = _str;
+
     switch (_str[_position++])
     {
     case '#':
@@ -22,19 +24,9 @@ bool GCodeParser::_parse_internal()
 
 #define PARSE_ERROR 100500
 
-int parse_int()
-{
-
-}
-
-int next_token()
-{
-
-}
-
 bool GCodeParser::parse_command_m()
 {
-    switch(parse_int())
+    switch(parse_char())
     {
         case PARSE_ERROR:
             return true;
@@ -96,6 +88,14 @@ bool GCodeParser::parse_command_internal()
         }
     }
 
+    if(strcmp(_str + _position, "TOOL_CHANGE") == 0)
+    {
+        _command.cmd = GCodeCommand::TOOL_CHANGE;
+        return false;
+    }
+
+    _command = {GCodeCommand::OTHER};
+
     return true;
 }
 
@@ -103,24 +103,52 @@ bool GCodeExcec::execute(GCodeCommand cmd)
 {
     char buffer[256];
 
-    switch(cmd.cmd)
+    if(cmd.is_client(CLIENT_BT | CLIENT_BT))
     {
-        case GCodeCommand::RESTART:
-            esp_restart();
-            return true;
-        
-        case GCodeCommand::GET_IP:
-            responce(CLIENT_ALL_OUTPUT, "IP = %s" WiFi.localIP().toString());
-            return true;
+        switch(cmd.cmd)
+        {
+            case GCodeCommand::RESTART:
+                esp_restart();
+                return true;
             
-        case GCodeCommand::SET_WIFI_SSID:
-            responce(CLIENT_ALL_OUTPUT, "new WIFI ssid = %s" cmd.WIFI_SSID);
-            return true;
+            case GCodeCommand::GET_IP:
+                responce(CLIENT_ALL_OUTPUT, "IP = %s" WiFi.localIP().toString());
+                return true;
+                
+            case GCodeCommand::SET_WIFI_SSID:
+                responce(CLIENT_ALL_OUTPUT, "new WIFI ssid = %s" cmd.WIFI_SSID);
+                return true;
 
-        case GCodeCommand::SET_WIFI_PASS:
-            auto ip_string = WiFi.localIP();
-            responce(CLIENT_ALL_OUTPUT, "new WIFI password = %s" cmd.WIFI_PASS);
-            return true;
+            case GCodeCommand::SET_WIFI_PASS:
+                auto ip_string = WiFi.localIP();
+                responce(CLIENT_ALL_OUTPUT, "new WIFI password = %s" cmd.WIFI_PASS);
+                return true;
+
+            case GCodeCommand::TOOL_CHANGE:
+                tool_change_state = TOOL_CHANGE_WAIT_TOOL;
+                return true;
+        }
+    }
+    else if(cmd.is_client(CLIENT_BOARD))
+    {
+        switch(tool_change_state)
+        {
+            case TOOL_CHANGE_WAIT_TOOL:
+
+                if(cmd.cmd == GCodeCommand::SUCCESS)
+                {
+                    tool_change_state = TOOL_CHANGE_WAIT_PROBE;
+                    send_command(CLIENT_BOARD, "M01");
+                }
+
+            case TOOL_CHANGE_WAIT_PROBE:
+                
+                if(cmd.cmd == GCodeCommand::SUCCESS)
+                {
+                    tool_change_state = TOOL_CHANGE_WAIT_PROBE;
+                    send_command(CLIENT_BOARD, "M01");
+                }
+        }
     }
     
     return false;
