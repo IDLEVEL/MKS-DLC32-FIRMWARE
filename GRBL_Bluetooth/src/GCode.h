@@ -25,7 +25,14 @@ public:
 
     void send_command(CLIENT client, const char* cmd)
     {
-
+		if(client & CLIENT::CLIENT_BT)
+        {
+            SerialBT.write(ptr, size);
+        }
+        else if(client & CLIENT::CLIENT_BOARD)
+        {
+            MKS_Serial.write(ptr, size);
+        }
     }
 
     void process(CLIENT client, const uint8_t* ptr, uint16_t size)

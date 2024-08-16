@@ -42,23 +42,6 @@ public:
 		
 		return false;
 	}
-
-<<<<<<< HEAD
-    bool next_token()
-=======
-	u32_t read_char()
->>>>>>> ecbc0b326040a0e1723733a326971da189042def
-    {
-        return true;
-    }
-
-    char parse_char()
-    {
-        if(*_current_str_ptr == 0)
-            return PARSE_ERROR;
-
-        return *_current_str_ptr;
-    }
 	
     bool read_int(int32_t& value, uint8_t min_value, uint8_t max_value = 0, bool can_negative = false)
     {

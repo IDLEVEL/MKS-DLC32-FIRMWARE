@@ -8,6 +8,12 @@
 bool GCodeParser::_parse_internal()
 {
     _current_str_ptr = _str;
+	
+	if(strcmp(_str + _position, "OK\n") == 0)
+	{
+		_command = {GCodeCommand::OK};
+        return false;
+	}
 
     switch (_str[_position++])
     {
@@ -179,7 +185,7 @@ bool GCodeExcec::execute(GCodeCommand cmd)
 {
     char buffer[256];
 
-    if(cmd.is_client(CLIENT_BT | CLIENT_BT))
+    if(cmd.is_client(CLIENT_INPUT))
     {
         switch(cmd.cmd)
         {
@@ -222,8 +228,10 @@ bool GCodeExcec::execute(GCodeCommand cmd)
                 if(cmd.cmd == GCodeCommand::SUCCESS)
                 {
                     tool_change_state = TOOL_CHANGE_WAIT_PROBE;
-                    send_command(CLIENT_BOARD, "M01");
+                    send_command(CLIENT_BOARD, "PROBE");
                 }
+				
+			case TOOL_CHANGE_WAIT_PROBE:
         }
     }
     
