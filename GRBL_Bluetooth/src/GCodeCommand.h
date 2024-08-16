@@ -32,9 +32,14 @@ struct GCodeCommand
 
     union
     {
-        char WIFI_SSID[24];
-        char WIFI_PASS[24];
-
+		struct WIFI
+		{
+			char WIFI_SSID[24];
+			char WIFI_PASS[24];
+		};
+		
+		WIFI wifi;
+		
         uint8_t pin_id;
         uint8_t pin_pwm;
     };

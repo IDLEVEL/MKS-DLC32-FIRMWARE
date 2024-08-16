@@ -20,6 +20,31 @@ class GCodeParser
     bool _parse_internal();
 
     const char PARSE_ERROR = 0;
+	
+	Stream _stream;
+	
+	struct Stream
+	{
+		int get_int()
+		{
+		}
+		
+		int read_int()
+		{
+		}
+		
+		uint16_t get_char()
+		{
+		}
+		
+		uint16_t read_char()
+		{
+		}
+		
+		void skip_chars(char v)
+		{
+		}
+	};
 
 public:
 

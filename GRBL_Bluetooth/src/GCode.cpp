@@ -7,15 +7,13 @@
 
 bool GCodeParser::_parse_internal()
 {
-    _current_str_ptr = _str;
-	
-	if(strcmp(_str + _position, "OK\n") == 0)
+	if(_stream.starts_with(_str + _position, "OK\n") == 0)
 	{
 		_command = {GCodeCommand::OK};
-        return false;
+        return true;
 	}
 
-    switch (_str[_position++])
+    switch (_stream.read_char())
     {
     case '#':
         return parse_command_internal();
@@ -24,35 +22,42 @@ bool GCodeParser::_parse_internal()
         return parse_command_m();
     
     default:
-        return true;
+        break;
     }
+	
+	return false;
 }
 
 #define PARSE_ERROR 100500
 
 bool GCodeParser::parse_command_m()
 {
-<<<<<<< HEAD
-    switch(parse_char())
-=======
-    switch(read_int())
->>>>>>> ecbc0b326040a0e1723733a326971da189042def
+	int code;
+	
+	if(!_stream.read_int(code))
+		return false;
+	
+    switch(code)
     {
         case PARSE_ERROR:
             return false;
 
         case 42:
 
-            if(!next())
-                return false;
+            _stream.skip_spaces();
 			
-			if(read_char() == 'I')
+			char next_char;
+
+			if(!_stream.read_char(next_char))
+				return false;
+			
+			if(next_char == 'I')
 			{
 				if(!next())
 					return false;
 			}
 			
-			if(read_char() == 'P')
+			if(next_char == 'P')
 			{
 				if(!read_int(pin))
 					return false;
@@ -61,7 +66,7 @@ bool GCodeParser::parse_command_m()
 					return true;
 			}
 			
-			if(read_char() == 'S')
+			if(next_char == 'S')
 			{
 				if(!read_int(pwm))
 					return false;
@@ -137,45 +142,45 @@ bool GCodeParser::parse_command_m()
 
 bool GCodeParser::parse_command_internal()
 {
-    if(strcmp(_str + _position, "IP") == 0)
+    if(_stream.try_read("IP"))
     {
         _command = {GCodeCommand::GET_IP};
-        return false;
+        return true;
     }
 
-    if(strcmp(_str + _position, "RESTART") == 0)
+    if(_stream.try_read("RESTART"))
     {
         _command = {GCodeCommand::RESTART};
-        return false;
+        return true;
     }
 
-    if(sscanf("PIN %d %d", _str + _position, &_command.pin_id, &_command.pin_pwm))
-    {
-        _command.cmd = GCodeCommand::SET_PIN;
-        return false;
-    }
+	if(_stream.try_read("PIN"))
+	{
+		_command.pin_id = _stream.read_int();
+		_command.pin_pwm = _stream.read_int();
 
-    if(strcmp(_str + _position, "WIFI ") == 0)
+		_command.cmd = GCodeCommand::SET_PIN;
+		
+		return true;
+	}
+	
+    if(_stream.try_read("WIFI"))
     {
-        if(sscanf("SSID %s", _str + _position + 5, _command.WIFI_SSID))
+		_stream.skip_spaces();
+		
+        if(_stream.scanf(("SSID %s", _command.WIFI_SSID))
         {
             _command.cmd = GCodeCommand::SET_WIFI_SSID;
             return false;
         }
 
-        if(sscanf("PASS %s", _str + _position + 5, _command.WIFI_PASS))
+        if(_stream.scanf("PASS %s", _command.WIFI_PASS))
         {
             _command.cmd = GCodeCommand::SET_WIFI_PASS;
             return false;
         }
     }
-
-    if(strcmp(_str + _position, "TOOL_CHANGE") == 0)
-    {
-        _command.cmd = GCodeCommand::TOOL_CHANGE;
-        return false;
-    }
-
+	
     _command = {GCodeCommand::OTHER};
 
     return true;

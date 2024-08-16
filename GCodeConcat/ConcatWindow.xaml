@@ -1,0 +1,8 @@
+﻿<Window x:Class="GCodeConcat.ConcatWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="GCodeConcat" Height="300" Width="300">
+	<Grid Drop="Grid_Drop" PreviewDrop="Grid_PreviewDrop">
+		
+	</Grid>
+</Window>

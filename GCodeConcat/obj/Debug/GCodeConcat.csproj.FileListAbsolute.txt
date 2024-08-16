@@ -4,3 +4,7 @@ C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeConcat\bin\Debug\GCodeC
 C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeConcat\obj\Debug\GCodeConcat.csprojResolveAssemblyReference.cache
 C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeConcat\obj\Debug\GCodeConcat.exe
 C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeConcat\obj\Debug\GCodeConcat.pdb
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeConcat\obj\Debug\ConcatWindow.baml
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeConcat\obj\Debug\ConcatWindow.g.cs
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeConcat\obj\Debug\GCodeConcat_MarkupCompile.cache
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeConcat\obj\Debug\GCodeConcat.g.resources
