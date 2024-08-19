@@ -63,6 +63,7 @@ IRAM_ATTR void lvgl_disp_task(void *parg) {
         }else {
             lv_task_handler();
             mks_page_data_updata();
+            ts35_beep_handler();
         }
 
 #if defined(USE_DelayUntil)
@@ -116,6 +117,7 @@ static void mks_page_data_updata(void) {
             hard_home_check();
             soft_home_check();
             move_pos_update();
+            pause_check();
             probe_check();
             count_updata = 0;
         }

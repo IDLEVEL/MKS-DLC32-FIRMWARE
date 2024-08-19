@@ -70,6 +70,19 @@ static void event_henadle_pupup_com(lv_obj_t* obj, lv_event_t event) {
 	}
 }
 
+volatile bool pause_popup_shown = false;
+
+static void event_henadle_pause_pupup_com(lv_obj_t* obj, lv_event_t event) { 
+
+	if (event == LV_EVENT_RELEASED) 
+	{
+		set_click_status(true);
+		common_popup_com_del();
+		MKS_GRBL_CMD_SEND("~\n");
+		pause_popup_shown = false;
+	}
+}
+
 void set_move(char axis, float step, uint32_t speed) {
 
 	if(step == 0) return;
@@ -664,6 +677,27 @@ void soft_home_check(void) {
 	}
 }
 
+void pause_check()
+{
+	if(gc_state.modal.program_flow == ProgramFlow::Paused && sys.suspend.value)
+	{
+		if(!pause_popup_shown)
+		{
+			pause_popup_shown = true;
+
+			ts35_beep_on(250);
+			
+			mks_draw_common_popup_info_com("Info", "PAUSED!", " ", event_henadle_pause_pupup_com);
+		}
+	}
+	else if(pause_popup_shown)
+	{
+		set_click_status(true);
+		common_popup_com_del();
+		pause_popup_shown = false;
+	}
+}
+
 void probe_check() {
 
 	switch(probe_run.status) 
@@ -699,8 +733,8 @@ void probe_check() {
 		break;
 
 		case PROBE_SECODN_SUCCEED: 
-			MKS_GRBL_CMD_SEND("G92Z10\n");
-			MKS_GRBL_CMD_SEND("G0Z10F10\n");
+			MKS_GRBL_CMD_SEND("G92Z0\n");
+			MKS_GRBL_CMD_SEND("G0Z10F30\n");
 			common_pupup_info_del();
 			mks_draw_common_popup_info_com("Info", "Probe succeed!", " ", event_henadle_pupup_com);
 			probe_run.status = PROBE_NO;

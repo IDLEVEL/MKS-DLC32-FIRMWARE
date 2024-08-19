@@ -522,7 +522,7 @@ void mks_draw_common_popup_info_com(char *title, char *line1, char *line2, lv_ev
     com_p_info_com.com_btn_sytle.body.opa = LV_OPA_COVER; // 设置背景色完全不透明
     com_p_info_com.com_btn_sytle.text.color = LV_COLOR_WHITE;
 	
-    com_p_info_com.btn_yes = mks_lv_btn_set_for_screen(com_p_info_com.com_popup_src, com_p_info_com.btn_yes, 100, 40, 0, 60, event_cb_yes);
+    com_p_info_com.btn_yes = mks_lv_btn_set_for_screen(com_p_info_com.com_popup_src, com_p_info_com.btn_yes, 170, 60, 0, 45, event_cb_yes);
     
 	lv_btn_set_style(com_p_info_com.btn_yes, LV_BTN_STYLE_REL, &com_p_info_com.com_btn_sytle);
     lv_btn_set_style(com_p_info_com.btn_yes,LV_BTN_STYLE_PR,&com_p_info_com.com_btn_sytle);

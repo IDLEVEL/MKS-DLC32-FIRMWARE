@@ -141,4 +141,5 @@ void set_xy_home(void);
 void set_z_home(void);
 void move_pos_update(void);
 void probe_check();
+void pause_check();
 #endif

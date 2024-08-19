@@ -27,6 +27,24 @@ void ts35_beep_off(void) {
     digitalWrite(BEEPER, LOW);
 }
 
+uint32_t ts35_beep_off_time = 0;
+
+void ts35_beep_handler(void) {
+
+    if(ts35_beep_off_time > 0 && millis() > ts35_beep_off_time)
+    {
+        ts35_beep_off_time = 0;
+        ts35_beep_off();
+    }
+}
+
+void ts35_beep_on(uint16_t time_ms) {
+
+    ts35_beep_off_time = millis() + uint32_t(time_ms);
+
+    ts35_beep_on();
+}
+
 
 #define LED_RESOLUTION      10
 #define LED_CHANNEL         14

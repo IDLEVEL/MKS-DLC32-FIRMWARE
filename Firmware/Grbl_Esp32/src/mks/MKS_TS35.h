@@ -50,6 +50,8 @@ void tft_TS35_SPI_begin(void);
 void ts35_beep_init();
 void ts35_beep_on(void);
 void ts35_beep_off(void);
+void ts35_beep_handler(void);
+void ts35_beep_on(uint16_t time_ms);
 
 void bsp_led_init(void);
 void ts35_set_flag(bool flag);
