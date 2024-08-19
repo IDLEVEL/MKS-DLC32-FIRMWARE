@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace GCodeCombiner
 {
@@ -31,6 +33,14 @@ namespace GCodeCombiner
             
         }
 
+        private String ReadFileIfExistsOrEmpty(string path)
+        {
+            if(File.Exists(path))
+                return File.ReadAllText(path);
+
+            return null;
+        }
+
         private void SaveGcode(object sender, EventArgs e)
         {
             var fileDialog = new SaveFileDialog();
@@ -42,9 +52,18 @@ namespace GCodeCombiner
 
             if (success.GetValueOrDefault())
             {
-                var concatGcode = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "concat.gcode"));
+                var gcodeDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "gcode");
 
                 var allGcode = new System.Text.StringBuilder();
+
+                var appendGcode = ReadFileIfExistsOrEmpty(Path.Combine(gcodeDir, "append.gcode"));
+                var prependGcode = ReadFileIfExistsOrEmpty(Path.Combine(gcodeDir, "prepend.gcode"));
+                var concatGcode = ReadFileIfExistsOrEmpty(Path.Combine(gcodeDir, "concat.gcode"));
+                
+                if(prependGcode != null)
+                {
+                    allGcode.AppendLine(prependGcode);
+                }
 
                 var selected_file_items = _file_items.Where(f => f.Selected).ToArray();
 
@@ -58,6 +77,11 @@ namespace GCodeCombiner
                         allGcode.AppendLine(concatGcode);
                 }
 
+                if(appendGcode != null)
+                {
+                    allGcode.AppendLine(appendGcode);
+                }
+
                 allGcode.AppendLine("M30");
 
                 File.WriteAllText(fileDialog.FileName, allGcode.ToString());
@@ -66,20 +90,26 @@ namespace GCodeCombiner
 
         private void DeleteFileItem(object sender, EventArgs args)
         {
-            var button = (args as RoutedEventArgs).Source as Button;
-            var fileItem = button.DataContext as FileItem;
+            var fileItem = (FileItem)(((Button)sender).DataContext);
 
             _file_items.Remove(fileItem);
         }
 
-        private void ListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if(_list_view.SelectedIndex != -1)
-            {
-                _gcode_box.Text = 
-                    File.ReadAllText(_file_items[_list_view.SelectedIndex].FilePath);
-            }
+        private Button previousViewedButton;
 
+        private void ViewFileItem(object sender, EventArgs args)
+        {
+            var button = ((Button)sender);
+            var fileItem = (FileItem)(button.DataContext);
+
+            _gcode_box.Dispatcher.Invoke(() =>
+                _gcode_box.Text = File.ReadAllText(fileItem.FilePath));
+
+            if(previousViewedButton != null)
+                previousViewedButton.Background = new SolidColorBrush(Colors.White);
+            
+            previousViewedButton = button;
+            button.Background = new SolidColorBrush(Colors.Red);
         }
 
         private void OpenFile(object sender, EventArgs e)
