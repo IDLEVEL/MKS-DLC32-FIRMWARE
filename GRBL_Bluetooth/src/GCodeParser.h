@@ -5,9 +5,6 @@
 
 class GCodeParser
 {
-    const char* _str;
-    uint16_t _length;
-    uint16_t _position;
     GCodeCommand _command;
 
     const char* _current_str_ptr;
@@ -25,24 +22,52 @@ class GCodeParser
 	
 	struct Stream
 	{
-		int get_int()
+		const char* _str;
+		uint16_t _length;
+		uint16_t _position;
+		
+		bool read_number(float& num)
 		{
+			
+		}
+
+		bool read_char(char& ch)
+		{
+			if(_position < length)
+			{
+				ch = _str[_position++];
+				return true;
+			}
+			
+			return false;
 		}
 		
-		int read_int()
+		void skip_chars(char ch)
 		{
+			while(_str[_position] == ch && _position < _length)
+				_position++;
 		}
 		
-		uint16_t get_char()
+		void skip_spaces()
 		{
+			return skip_chars(' ');
 		}
 		
-		uint16_t read_char()
+		bool try_read(const char* str)
 		{
-		}
-		
-		void skip_chars(char v)
-		{
+			while(*str != '\0')
+			{
+				if(_position == _length)
+					return false;
+				
+				if(*str != _str[_position])
+					return false;
+				
+				str++;
+				_position++;
+			}
+			
+			return true;
 		}
 	};
 
