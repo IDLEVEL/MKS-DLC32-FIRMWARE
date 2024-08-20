@@ -1,0 +1,5 @@
+*.tab
+*.gbr
+*.gcode
+*.map
+*backups/
