@@ -88,6 +88,11 @@ namespace GCodeCombiner
             }
         }
 
+        private async void UploadGcode(object sender, EventArgs e)
+        {
+            Web.UploadFile("X33.nc", File.ReadAllBytes("gcode\\concat.gcode"));
+        }
+
         private void DeleteFileItem(object sender, EventArgs args)
         {
             var fileItem = (FileItem)(((Button)sender).DataContext);

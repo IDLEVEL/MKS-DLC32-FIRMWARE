@@ -16,6 +16,7 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
 
         <ListView Grid.Column="0" Grid.Row="0" Margin="10,10,10,10" 
@@ -53,6 +54,9 @@
         </Button>
         <Button Grid.Column="0" Grid.Row="2"  HorizontalAlignment="Stretch" Margin="10" Height="30" Click="SaveGcode">
             Save Gcode
+        </Button>
+        <Button Grid.Column="0" Grid.Row="3"  HorizontalAlignment="Stretch" Margin="10" Height="30" Click="UploadGcode">
+            Upload Gcode
         </Button>
     </Grid>
 </Window>

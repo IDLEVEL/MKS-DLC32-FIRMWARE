@@ -4,58 +4,57 @@
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <ArduinoOTA.h>
-#include "BluetoothSerial.h"
-#include "ESPTelnet.h"
+#include "helpers.h"
+#include "GCode.h"
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
 
-#define MKS_Serial Serial2
-
 BluetoothSerial SerialBT;
 ESPTelnet Telnet;
 
+CmdBuffer<512> bt_buffer;
+CmdBuffer<512> mks_buffer;
+
+GCodeExcec gcode_excec;
+
 void onBtData(const uint8_t *buffer, size_t size)
 {
-  MKS_Serial.write(buffer, size);
-}
+  uint16_t used_size = 0;
 
-char buffer[128];
+  for(auto i = 0; i < size; i++)
+  {
+    if((used_size = bt_buffer.push(buffer[i])) != CMD_BUFFER_WAIT)
+    {
+      gcode_excec.process(CLIENT_BT, bt_buffer.buffer, used_size);
+    }
+  }
+
+  //MKS_Serial.write(buffer, size);
+}
 
 void onMksData()
 {
-  int avail_bytes;
+  uint16_t used_size = 0;
 
-  while((avail_bytes = MKS_Serial.available()) > 0)
+  while(MKS_Serial.available())
   {
-    auto readed = MKS_Serial.readBytes(buffer, min<int>(avail_bytes, sizeof(buffer)));
+    auto byte = MKS_Serial.read();
 
-    SerialBT.write((uint8_t*)buffer, readed);
-    Serial.write((uint8_t*)buffer, readed);
+    if(byte < 0)
+      break;
+
+    if((used_size = mks_buffer.push(byte)) != CMD_BUFFER_WAIT)
+    {
+      gcode_excec.process(CLIENT_BOARD, mks_buffer.buffer, used_size);
+    }    
   }
 }
 
 void onSerialData()
 {
-   int avail_bytes;
-
-    while((avail_bytes = Serial.available()) > 0)
-    {
-      auto readed = Serial.readBytes(buffer, min<int>(avail_bytes, sizeof(buffer)));
-
-      MKS_Serial.write((uint8_t*)buffer, readed);
-    }
-}
-
-volatile int bt_connection_event = 0;
-
-void Bt_Status (esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
-
-  if (event == ESP_SPP_SRV_OPEN_EVT) 
-  {
-    bt_connection_event = 30;
-  }
+  //copy_stream(Serial, MKS_Serial, SerialBT);
 }
 
 const char *ssid = "kv-41";
@@ -73,8 +72,6 @@ void setup()
   SerialBT.onData(onBtData);
   Serial.onReceive(onSerialData);
   MKS_Serial.onReceive(onMksData);
-
-  SerialBT.register_callback(Bt_Status);
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -139,12 +136,4 @@ void loop()
   ArduinoOTA.handle();
 
   delay(3);
-
-  if(bt_connection_event > 0)
-  {
-    bt_connection_event--;
-
-    if(bt_connection_event == 0)
-      SerialBT.println(WiFi.localIP());
-  }
 }

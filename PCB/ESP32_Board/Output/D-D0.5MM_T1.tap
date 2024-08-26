@@ -1,0 +1,17 @@
+;	              Name: D-D0.5MM_T1
+;	              Tool: Ñגונכמ (O0.5 לל) ÐÀÇÌÅÒÊÀ
+;	    Tool passDepth: 5
+;	     Tool stepover: 0
+;	Tool feedRate mm/s: 0
+;	             Depth: 2
+;	              Side: Top
+G21 G17 G90
+M3 S12000
+G0Z5
+X0Y0
+Z1
+G1Z-2.144F30
+G0Z2
+Z5
+M5
+M30
