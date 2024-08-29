@@ -43,6 +43,8 @@ void mks_lvgl_init(void) {
     lv_indev_drv_register(&indev_drv);
 }
 
+uint16_t temp_dma_buffer[LV_BUF_SIZE];
+
 void my_disp_flush(lv_disp_drv_t * disp, const lv_area_t * area, lv_color_t * color_p) {
 
     uint32_t w = (area->x2 - area->x1 + 1);
@@ -55,12 +57,10 @@ void my_disp_flush(lv_disp_drv_t * disp, const lv_area_t * area, lv_color_t * co
 
     #if LV_COLOR_DEPTH == 8
 
-        uint16_t buffer[LV_BUF_SIZE];
-
         for(auto i = 0; i < w * h; i++)
-            buffer[i] = lv_color_to16(color_p[i]);
+            temp_dma_buffer[i] = lv_color_to16(color_p[i]);
 
-        tft.pushColorsDMA(buffer, w * h, true);
+        tft.pushColorsDMA(temp_dma_buffer, w * h, true);
     #else
         tft.pushColorsDMA(&color_p->full, w * h, true);
     #endif
