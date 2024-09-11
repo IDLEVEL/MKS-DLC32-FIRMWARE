@@ -90,7 +90,7 @@ namespace GCodeCombiner
 
         private async void UploadGcode(object sender, EventArgs e)
         {
-            Web.UploadFile("X33.nc", File.ReadAllBytes("gcode\\concat.gcode"));
+            Web.UploadFile("new1.gcode", "33\n123123\nGCODE12");
         }
 
         private void DeleteFileItem(object sender, EventArgs args)

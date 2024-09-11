@@ -31,6 +31,7 @@ void onMksData()
   {
     auto readed = MKS_Serial.readBytes(buffer, min<int>(avail_bytes, sizeof(buffer)));
 
+    Telnet.write((uint8_t*)buffer, readed);
     SerialBT.write((uint8_t*)buffer, readed);
     Serial.write((uint8_t*)buffer, readed);
   }
@@ -46,6 +47,11 @@ void onSerialData()
 
       MKS_Serial.write((uint8_t*)buffer, readed);
     }
+}
+
+void onTelnetData(String data)
+{
+    MKS_Serial.write((uint8_t*)data.c_str(), data.length());
 }
 
 volatile int bt_connection_event = 0;
@@ -73,6 +79,7 @@ void setup()
   SerialBT.onData(onBtData);
   Serial.onReceive(onSerialData);
   MKS_Serial.onReceive(onMksData);
+  Telnet.onInputReceived(onTelnetData);
 
   SerialBT.register_callback(Bt_Status);
 
@@ -123,7 +130,7 @@ void setup()
   ArduinoOTA.begin();
 
   Telnet.begin();   
-
+  
   Serial.println("Ready");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());

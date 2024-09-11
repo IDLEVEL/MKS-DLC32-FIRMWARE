@@ -12,41 +12,30 @@ namespace GCodeCombiner
 {
     public class Web
     {
-        public static async Task UploadFile(string fileName, byte[] file)
+        public static async Task UploadFile(string fileName, String contentData)
         {   
-            /*
-            var content = $"------WebKitFormBoundaryHEwnGACfAY4a1D2c\r\nContent-Disposition: form-data; name=\"path\"\r\n\r\n/\r\n" + 
-            "------WebKitFormBoundaryHEwnGACfAY4a1D2c\r\nContent-Disposition: form-data; name=\"/sd2.ncS\"\r\n\r\n503661\r\n" + 
-            "------WebKitFormBoundaryHEwnGACfAY4a1D2c\r\nContent-Disposition: form-data; name=\"myfile[]\"; filename=\"/sd2.nc\"\r\n"+ 
-            "Content-Type: application/octet-stream\r\n\r\n\r\n------WebKitFormBoundaryHEwnGACfAY4a1D2c--\r\n";
-*/
+            var boundary = "----WebKitFormBoundaryHEwnGACfAY4a1D2c";
+
+            var content_src = $"--{boundary}\r\nContent-Disposition: form-data; name=\"path\"\r\n\r\n/\r\n" + 
+            $"--{boundary}\r\nContent-Disposition: form-data; name=\"/{fileName}S\"\r\n\r\n{contentData.Length}\r\n" + 
+            $"--{boundary}\r\nContent-Disposition: form-data; name=\"myfile[]\"; filename=\"/{fileName}\"\r\n"+ 
+            $"Content-Type: application/octet-stream\r\n\r\n{contentData}\r\n--{boundary}--\r\n";
 
             try
             {
                 using (var client = new HttpClient())
                 {
-                    using (var content = new MultipartFormDataContent("------WebKitFormBoundary6pu7KoD3jOolREHM"))
-                    {
-                        var byteArrayContent = new ByteArrayContent(file);
+                        var content = new ByteArrayContent(Encoding.UTF8.GetBytes(content_src));
                         
-                        byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
-                        
-                        content.Add(byteArrayContent, "myfile", $"/{fileName}");
-
-                        content.Add(new StringContent("/"), "path");
-
-                        content.Add(new StringContent(file.Length.ToString()), $"/{fileName}S");
+                        content.Headers.Add("content-type", $"multipart/form-data; boundary={boundary}");
 
                         System.Windows.MessageBox.Show(await content.ReadAsStringAsync());
 
                         var url = "http://192.168.1.71/upload";
+
                         var result = await client.PostAsync(url, content);
 
-
                         var responce = await result.Content.ReadAsStringAsync();
-
-                        System.Windows.MessageBox.Show(file.Length.ToString() + ":" + responce);
-                    }
                 }
             }
             catch (Exception ex)

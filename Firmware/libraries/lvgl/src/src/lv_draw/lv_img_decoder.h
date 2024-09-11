@@ -122,6 +122,7 @@ typedef struct
     lv_img_header_t header;
     uint32_t data_size;
     const uint8_t * data;
+    uint8_t interpolate;
 } lv_img_dsc_t;
 
 /* Decoder function definitions */
