@@ -1,0 +1,17 @@
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\GCodeCombiner.csproj.AssemblyReference.cache
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\App.g.cs
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\GCodeCombiner_MarkupCompile.cache
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\GCodeCombiner_MarkupCompile.lref
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\MainWindow.g.cs
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\bin\Debug\GCodeCombiner.exe.config
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\bin\Debug\GCodeCombiner.exe
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\bin\Debug\GCodeCombiner.pdb
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\MainWindow.baml
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\GCodeCombiner.g.resources
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\GCodeCombiner.csproj.CoreCompileInputs.cache
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\GCodeCombiner.exe
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\GCodeCombiner.pdb
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Sergey\Documents\GitHub\MKS-DLC32-FIRMWARE\GCodeCombiner\GCodeCombiner\obj\Debug\GCodeCom.710280E3.Up2Date

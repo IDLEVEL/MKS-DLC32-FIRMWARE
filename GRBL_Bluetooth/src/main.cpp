@@ -74,7 +74,7 @@ void setup()
 
   SerialBT.begin("MKS32"); //Bluetooth device name
 
-  MKS_Serial.begin(115200, SERIAL_8N1);
+  MKS_Serial.begin(57600, SERIAL_8N1);
 
   SerialBT.onData(onBtData);
   Serial.onReceive(onSerialData);

@@ -172,7 +172,11 @@ void set_home(void) {
 		// lv_label_set_text(move_page.label_cnc_pwr, "OFF");
 	}
 
-	MKS_GRBL_CMD_SEND("$J=G90X0Y0F2000\n");
+	//MKS_GRBL_CMD_SEND("$J=G90X0Y0F2000\n");
+	
+	MKS_GRBL_CMD_SEND("G0Z10F100\n");
+	MKS_GRBL_CMD_SEND("G0X0Y0F800\n");
+
 	set_click_status(false);
 	mks_draw_common_pupup_info("Info", "Homing...", " ");
 	ui_move_ctrl.soft_homing_status = HOMING_START;
@@ -718,7 +722,7 @@ void probe_check() {
 
 		case PROBE_FITST_SUCCEED: 
 			// grbl_send(CLIENT_SERIAL, "enter first secceed\n");
-			MKS_GRBL_CMD_SEND("G38.2Z-2F30\n");
+			MKS_GRBL_CMD_SEND("G38.2Z-2F5\n");
 			probe_run.status = PROBE_SECOND_STAR;
 		break;
 
