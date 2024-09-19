@@ -307,6 +307,9 @@ typedef struct {
     float coord_offset[MAX_N_AXIS];  // Retains the G92 coordinate offset (work coordinates) relative to
     // machine zero in mm. Non-persistent. Cleared upon reset and boot.
     float tool_length_offset;  // Tracks tool length offset value when enabled.
+
+    char pause_text[64];
+
 } parser_state_t;
 extern parser_state_t gc_state;
 

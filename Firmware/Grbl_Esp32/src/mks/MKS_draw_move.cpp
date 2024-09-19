@@ -691,7 +691,7 @@ void pause_check()
 
 			ts35_beep_on(250);
 			
-			mks_draw_common_popup_info_com("Info", "PAUSED!", " ", event_henadle_pause_pupup_com);
+			mks_draw_common_popup_info_com("Info", "PAUSED!", gc_state.pause_text, event_henadle_pause_pupup_com);
 		}
 	}
 	else if(pause_popup_shown)

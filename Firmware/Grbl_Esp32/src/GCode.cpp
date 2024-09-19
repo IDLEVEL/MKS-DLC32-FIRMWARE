@@ -173,6 +173,8 @@ Error gc_execute_line(char* line, uint8_t client) {
     float      value;
     uint8_t    int_value = 0;
     uint16_t   mantissa  = 0;
+    uint16_t   copy_pos = 0;
+
     if (gc_parser_flags & GCParserJogMotion) {
         char_counter = 3;  // Start parsing after `$J=`
     } else {
@@ -456,6 +458,16 @@ Error gc_execute_line(char* line, uint8_t client) {
                         // M0 - Pause
                         gc_block.modal.program_flow = ProgramFlow::Paused;
                         mg_word_bit                 = ModalGroup::MM4;
+
+                        copy_pos = 0;
+
+                        while(line[char_counter] != '\n' && line[char_counter] != '\0' && copy_pos < sizeof(gc_state.pause_text))
+                        {
+                            gc_state.pause_text[copy_pos++] = line[char_counter++];
+                        }
+
+                        gc_state.pause_text[copy_pos++] = '\0';
+
                         break;
                     case 1:
                         // M1 - Optional Stop not supported
